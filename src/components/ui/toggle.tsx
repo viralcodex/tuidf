@@ -25,8 +25,7 @@ export function Toggle<T>(props: ToggleProps<T>) {
         ...EmptyBorderChars,
         horizontal: isHighlighted() ? "▄" : "▂",
       }}
-      paddingLeft={2}
-      paddingRight={2}
+      paddingX={2}
       paddingTop={1}
       justifyContent="center"
       alignItems="center"

@@ -175,8 +175,7 @@ export function PDFToImagesUI() {
           borderStyle="heavy"
           backgroundColor="#1a2f3a"
           paddingLeft={1}
-          paddingTop={1}
-          paddingBottom={1}
+          paddingY={1}
           marginTop={1}
           flexShrink={0}
         >

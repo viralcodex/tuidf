@@ -20,8 +20,7 @@ export function StatusBar(props: { message: string; type: StatusType }) {
       borderColor={getBorderColor()}
       borderStyle="heavy"
       backgroundColor="#1a1a1a"
-      paddingLeft={1}
-      paddingRight={1}
+      paddingX={1}
       marginTop={1}
       flexShrink={0}
     >

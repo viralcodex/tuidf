@@ -61,8 +61,7 @@ export function ToolsMenu(props: {
               <box
                 alignItems="center"
                 justifyContent="center"
-                paddingLeft={3}
-                paddingRight={3}
+                paddingX={3}
                 paddingTop={1}
                 onMouseDown={() => selectTool(tool.command)}
                 onMouseOver={() => setHoveredTool(tool.command)}
