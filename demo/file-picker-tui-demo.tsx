@@ -213,8 +213,7 @@ function FilePickerDemo() {
               border
               borderColor={focusedButton() === index() ? "#00d4ff" : "#444"}
               backgroundColor={focusedButton() === index() ? "#131313" : "#161616"}
-              paddingLeft={2}
-              paddingRight={2}
+              paddingX={2}
               onMouseDown={() => handleAction(btn.key)}
             >
               <text fg={focusedButton() === index() ? "#00d4ff" : "#888"} content={btn.label} />

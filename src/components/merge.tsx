@@ -4,7 +4,6 @@ import { openFile, getOutputPath, openOutputFolder } from "../utils/utils";
 import { Button } from "./ui/button";
 import { ButtonRow } from "./ui/button-row";
 import { FileList } from "./ui/file-list";
-import { Label } from "./ui/label";
 import { StatusBar } from "./ui/status-bar";
 import { ToolContainer } from "./ui/tool-container";
 import { useKeyboardNav } from "../hooks/useKeyboardNav";
@@ -117,8 +116,8 @@ export function MergeUI() {
 
   return (
     <ToolContainer>
-      <Label text="Files" count={fl.fileCount()} />
       <FileList
+        header="Files"
         files={fl.files}
         fileType="pdf"
         selectedIndex={fl.selectedIndex}

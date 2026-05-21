@@ -31,7 +31,6 @@ import {
   renderPDFPreviewPage,
 } from "../utils/pdf-preview";
 import { ToolContainer } from "./ui/tool-container";
-import { Label } from "./ui/label";
 import { FileList } from "./ui/file-list";
 import { ButtonRow } from "./ui/button-row";
 import { Button } from "./ui/button";
@@ -1096,10 +1095,8 @@ export function OrganiseUI() {
         </box>
       </box>
       <Show when={!isToolWindowOpen()}>
-        <Label text={"Files"} count={fl.fileCount()} />
-      </Show>
-      <Show when={!isToolWindowOpen()}>
         <FileList
+          header="Files"
           files={fl.files}
           fileType="pdf"
           selectedIndex={fl.selectedIndex}

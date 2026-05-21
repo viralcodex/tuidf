@@ -14,8 +14,7 @@ export function ToolContainer(props: {
       flexDirection="column"
       width="100%"
       height="100%"
-      paddingLeft={2}
-      paddingRight={2}
+      paddingX={2}
       paddingTop={props.paddingTop}
       paddingBottom={props.paddingBottom}
     >

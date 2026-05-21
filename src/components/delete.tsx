@@ -10,7 +10,6 @@ import {
 import { Button } from "./ui/button";
 import { ButtonRow } from "./ui/button-row";
 import { FileList } from "./ui/file-list";
-import { Label } from "./ui/label";
 import { StatusBar } from "./ui/status-bar";
 import { TextInput } from "./ui/text-input";
 import { ToolContainer } from "./ui/tool-container";
@@ -160,8 +159,8 @@ export function DeleteUI() {
 
   return (
     <ToolContainer>
-      <Label text="Files" count={fl.fileCount()} />
       <FileList
+        header="Files"
         files={fl.files}
         fileType="pdf"
         selectedIndex={fl.selectedIndex}
@@ -189,8 +188,7 @@ export function DeleteUI() {
           borderStyle="heavy"
           backgroundColor="#1a2f3a"
           paddingLeft={1}
-          paddingTop={1}
-          paddingBottom={1}
+          paddingY={1}
           marginTop={1}
           flexShrink={0}
         >

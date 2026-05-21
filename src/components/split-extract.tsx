@@ -282,8 +282,8 @@ export function SplitExtractUI() {
 
   return (
     <ToolContainer>
-      <Label text="Files" count={fl.fileCount()} />
       <FileList
+        header="Files"
         files={fl.files}
         fileType="pdf"
         selectedIndex={fl.selectedIndex}
@@ -324,8 +324,7 @@ export function SplitExtractUI() {
           borderColor="#3498db"
           borderStyle="heavy"
           backgroundColor="#182127"
-          paddingLeft={1}
-          paddingRight={1}
+          paddingX={1}
         >
           <Label text="Split" paddingBottom={1} />
           {/* <text fg="#95a5a6" content="Break the PDF into multiple files." paddingBottom={1}/> */}
@@ -394,8 +393,7 @@ export function SplitExtractUI() {
           borderColor="#9b59b6"
           borderStyle="heavy"
           backgroundColor="#211c27"
-          paddingLeft={1}
-          paddingRight={1}
+          paddingX={1}
         >
           <Label text="Extract" paddingBottom={1} />
           {/* <text fg="#b8a7c9" content="Copy selected pages into new files." paddingBottom={1}/> */}

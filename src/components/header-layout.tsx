@@ -19,16 +19,13 @@ export function HeaderLayout(props: ToolLayoutProps) {
         justifyContent="center"
         width="100%"
         flexShrink={0}
-        paddingLeft={2}
-        paddingRight={2}
+        paddingX={2}
         columnGap={2}
       >
         <box
           height={1}
-          paddingTop={1}
-          paddingBottom={1}
-          paddingLeft={1}
-          paddingRight={1}
+          paddingY={1}
+          paddingX={1}
           justifyContent="center"
           alignItems="center"
           onMouseDown={props.onBack}
@@ -49,8 +46,7 @@ export function HeaderLayout(props: ToolLayoutProps) {
           alignItems="center"
           justifyContent="center"
           height={1}
-          paddingTop={1}
-          paddingBottom={1}
+          paddingY={1}
           border={["bottom"]}
           borderColor={"#34495e"}
           customBorderChars={{

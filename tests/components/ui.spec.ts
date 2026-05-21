@@ -19,6 +19,13 @@ describe("ui component wiring", () => {
     expect(openButtonBlock.includes('props.onMove?.(index, "up")')).toBe(false);
   });
 
+  it("renders the shared file-list header from props", async () => {
+    const file = new URL("../../src/components/ui/file-list.tsx", import.meta.url);
+    const code = await Bun.file(file).text();
+
+    expect(code.includes("<Label text={props.header} count={fileCount()} />")).toBe(true);
+  });
+
   it("registers keyboard open actions for every file-list screen", async () => {
     const componentPaths = [
       "../../src/components/compress.tsx",
