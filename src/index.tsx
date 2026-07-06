@@ -1,5 +1,7 @@
-import { KeyEvent, RGBA } from "@opentui/core";
-import { render, useKeyboard } from "@opentui/solid";
+import { createCliRenderer, RGBA } from "@opentui/core";
+import { createDefaultOpenTuiKeymap } from "@opentui/keymap/opentui";
+import { KeymapProvider, useBindings } from "@opentui/keymap/solid";
+import { render } from "@opentui/solid";
 import { ToolsMenu } from "./components/tools-menu";
 import { createSignal } from "solid-js";
 import { HIGHLIGHT_ACCENT_COLOR, toolsMenu } from "./constants/constants";
@@ -21,7 +23,7 @@ const toolFileListOptions: Record<string, FileListOptions> = {
   organise: { trackPageCount: true },
 };
 
-render(() => {
+function App() {
   const [selectedTool, setSelectedTool] = createSignal<string>("");
   const [escapeCount, setEscapeCount] = createSignal(0);
 
@@ -35,23 +37,33 @@ render(() => {
     setEscapeCount(0);
   };
 
-  useKeyboard((event: KeyEvent) => {
-    if (event.name === "escape" && selectedTool() !== "") {
-      const currentCount = escapeCount() + 1;
-      setEscapeCount(currentCount);
-      if (escapeTimer) {
-        clearTimeout(escapeTimer);
-      }
-      if (currentCount >= 2) {
-        setSelectedTool("");
-        setEscapeCount(0);
-      } else {
-        escapeTimer = setTimeout(() => {
-          setEscapeCount(0);
-        }, 1400);
-      }
-    }
-  });
+  useBindings(() => ({
+    // Lower than useKeyboardNav's priority (100) so its input-mode
+    // escape (preventDefault: false) still bubbles here for double-esc back.
+    priority: 10,
+    bindings: [
+      {
+        key: "escape",
+        preventDefault: false,
+        cmd: () => {
+          if (selectedTool() === "") return;
+          const currentCount = escapeCount() + 1;
+          setEscapeCount(currentCount);
+          if (escapeTimer) {
+            clearTimeout(escapeTimer);
+          }
+          if (currentCount >= 2) {
+            setSelectedTool("");
+            setEscapeCount(0);
+          } else {
+            escapeTimer = setTimeout(() => {
+              setEscapeCount(0);
+            }, 1400);
+          }
+        },
+      },
+    ],
+  }));
 
   return (
     <box alignItems="center" justifyContent="center" flexGrow={1} backgroundColor="#141414">
@@ -84,4 +96,16 @@ render(() => {
       )}
     </box>
   );
-});
+}
+
+const renderer = await createCliRenderer();
+const keymap = createDefaultOpenTuiKeymap(renderer);
+
+render(
+  () => (
+    <KeymapProvider keymap={keymap}>
+      <App />
+    </KeymapProvider>
+  ),
+  renderer,
+);

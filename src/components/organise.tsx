@@ -1,11 +1,6 @@
-import {
-  RGBA,
-  TextAttributes,
-  type BoxRenderable,
-  type CliRenderer,
-  type KeyEvent,
-} from "@opentui/core";
-import { onResize, useKeyboard, useRenderer } from "@opentui/solid";
+import { RGBA, TextAttributes, type BoxRenderable, type CliRenderer } from "@opentui/core";
+import { onResize, useRenderer } from "@opentui/solid";
+import { useBindings } from "@opentui/keymap/solid";
 import {
   Show,
   type Accessor,
@@ -734,19 +729,19 @@ export function OrganiseUI() {
     });
 
     nav.registerElement({
+      id: "open-organise-btn",
+      type: "button",
+      onEnter: openToolWindow,
+      canFocus: () => fl.fileCount() > 0,
+    });
+
+    nav.registerElement({
       id: "open-output-btn",
       type: "button",
       onEnter: () =>
         openOutputFolder().catch((_) =>
           fl.setStatus({ msg: "Failed to open folder", type: "error" }),
         ),
-    });
-
-    nav.registerElement({
-      id: "open-organise-btn",
-      type: "button",
-      onEnter: openToolWindow,
-      canFocus: () => fl.fileCount() > 0,
     });
   });
 
@@ -1061,19 +1056,17 @@ export function OrganiseUI() {
     }
   };
 
-  useKeyboard((event: KeyEvent) => {
-    if (!isToolWindowOpen() || nav.isInputMode() || !fl.selectedFile()) {
-      return;
-    }
-
-    if (event.name === "left") {
-      goPrev();
-      return;
-    }
-
-    if (event.name === "right") {
-      goNext();
-    }
+  useBindings(() => {
+    const active = isToolWindowOpen() && !nav.isInputMode() && !!fl.selectedFile();
+    return {
+      priority: 50,
+      bindings: active
+        ? [
+            { key: "left", cmd: goPrev },
+            { key: "right", cmd: goNext },
+          ]
+        : [],
+    };
   });
 
   return (

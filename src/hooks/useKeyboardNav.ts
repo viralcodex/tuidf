@@ -1,6 +1,5 @@
 import { createSignal, createMemo } from "solid-js";
-import { useKeyboard } from "@opentui/solid";
-import { type KeyEvent } from "@opentui/core";
+import { useBindings } from "@opentui/keymap/solid";
 import type { FocusableElement } from "../model/models";
 
 export type { FocusableElement };
@@ -67,43 +66,41 @@ export function useKeyboardNav() {
     setFocusIndex(0);
   };
 
-  useKeyboard((event: KeyEvent) => {
-    // Allow Escape and Tab to exit input mode
-    if (isInputMode()) {
-      if (event.name === "escape") {
-        setIsInputMode(false);
-      } else if (event.name === "tab") {
-        setIsInputMode(false);
-        if (event.shift) {
-          focusPrev();
-        } else {
-          focusNext();
-        }
-      }
-      return;
-    }
-
-    switch (event.name) {
-      case "tab":
-        if (event.shift) {
-          focusPrev();
-        } else {
-          focusNext();
-        }
-        break;
-      case "return":
-        executeCurrentAction();
-        break;
-      case "down":
-      case "j":
-        focusNext();
-        break;
-      case "up":
-      case "k":
-        focusPrev();
-        break;
-    }
-  });
+  useBindings(() => ({
+    priority: 100,
+    bindings: isInputMode()
+      ? [
+          // Let escape bubble to the app-level double-esc handler in src/index.tsx
+          {
+            key: "escape",
+            cmd: () => setIsInputMode(false),
+            preventDefault: false,
+          },
+          {
+            key: "tab",
+            cmd: () => {
+              setIsInputMode(false);
+              focusNext();
+            },
+          },
+          {
+            key: "shift+tab",
+            cmd: () => {
+              setIsInputMode(false);
+              focusPrev();
+            },
+          },
+        ]
+      : [
+          { key: "tab", cmd: focusNext },
+          { key: "shift+tab", cmd: focusPrev },
+          { key: "return", cmd: executeCurrentAction },
+          { key: "down", cmd: focusNext },
+          { key: "j", cmd: focusNext },
+          { key: "up", cmd: focusPrev },
+          { key: "k", cmd: focusPrev },
+        ],
+  }));
 
   return {
     registerElement,
