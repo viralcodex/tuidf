@@ -16,7 +16,9 @@
   },
   "dependencies": {
     "@opentui/core": "0.2.0",
+    "@opentui/keymap": "0.2.0",
     "@opentui/solid": "0.2.0",
+    "docx": "^9.7.1",
     "mupdf": "1.27.0",
     "pdf-lib": "1.17.1",
     "solid-js": "1.9.9"

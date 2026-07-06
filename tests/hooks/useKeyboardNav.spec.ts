@@ -11,5 +11,7 @@ describe("useKeyboardNav hook module", () => {
     expect(code.includes("focusById")).toBe(true);
     expect(code.includes("clearElements")).toBe(true);
     expect(code.includes("setIsInputMode")).toBe(true);
+    expect(code.includes("useBindings")).toBe(true);
+    expect(code.includes('import { useKeyboard } from "@opentui/solid"')).toBe(false);
   });
 });
