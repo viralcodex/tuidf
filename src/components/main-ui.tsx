@@ -10,9 +10,11 @@ import { ImagesToPDFUI } from "./images-to-pdf";
 import { ProtectUI } from "./protect";
 import { DecryptUI } from "./decrypt";
 import { OrganiseUI } from "./organise";
+import { PageNumbersUI } from "./page-numbers";
 import { HeaderLayout } from "./header-layout";
 import { PDFPreviewPane } from "./pdf-preview";
 import { useFileListContext } from "../provider/fileListProvider";
+import { KeyboardNavProvider } from "../provider/keyboardNavProvider";
 import { Button } from "./ui/button";
 
 interface MainUIProps {
@@ -32,6 +34,7 @@ const toolComponents: Record<string, () => any> = {
   protect: ProtectUI,
   decrypt: DecryptUI,
   organise: OrganiseUI,
+  pageNumbers: PageNumbersUI,
 };
 
 export function MainUI(props: MainUIProps) {
@@ -50,33 +53,35 @@ export function MainUI(props: MainUIProps) {
 
   return (
     <HeaderLayout toolName={props.toolName} onBack={props.onBack}>
-      <box flexDirection="row">
-        <box flexGrow={3}>
-          <Dynamic component={toolComponents[props.selectedTool]} />
-        </box>
-        <Show when={props.selectedTool !== "organise" && props.selectedTool !== "decrypt"}>
-          <box flexGrow={2} width={isPreviewOpen() && fl.fileCount() > 0 ? "30%" : 6}>
-            <Show
-              when={isPreviewOpen() && fl.fileCount() > 0}
-              fallback={
-                <box alignItems="flex-start" paddingTop={2}>
-                  <Button
-                    disabled={!fl.selectedFile()}
-                    color="yellow"
-                    label="◀"
-                    onClick={() => setIsPreviewOpen(true)}
-                  />
-                </box>
-              }
-            >
-              <PDFPreviewPane
-                onOpen={() => setIsPreviewOpen(true)}
-                onClose={() => setIsPreviewOpen(false)}
-              />
-            </Show>
+      <KeyboardNavProvider>
+        <box flexDirection="row">
+          <box flexGrow={3}>
+            <Dynamic component={toolComponents[props.selectedTool]} />
           </box>
-        </Show>
-      </box>
+          <Show when={props.selectedTool !== "organise" && props.selectedTool !== "decrypt"}>
+            <box flexGrow={2} width={isPreviewOpen() && fl.fileCount() > 0 ? "30%" : 6}>
+              <Show
+                when={isPreviewOpen() && fl.fileCount() > 0}
+                fallback={
+                  <box alignItems="flex-start" paddingTop={2}>
+                    <Button
+                      disabled={!fl.selectedFile()}
+                      color="yellow"
+                      label="◀"
+                      onClick={() => setIsPreviewOpen(true)}
+                    />
+                  </box>
+                }
+              >
+                <PDFPreviewPane
+                  onOpen={() => setIsPreviewOpen(true)}
+                  onClose={() => setIsPreviewOpen(false)}
+                />
+              </Show>
+            </box>
+          </Show>
+        </box>
+      </KeyboardNavProvider>
     </HeaderLayout>
   );
 }

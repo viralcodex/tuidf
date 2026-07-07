@@ -1,3 +1,4 @@
+import type { StandardFonts } from "pdf-lib";
 import type { PreviewDocument } from "../utils/pdf-preview";
 
 // ============ Shared Types ============
@@ -9,6 +10,7 @@ export interface FocusableElement {
   onEnter?: () => void;
   canFocus?: () => boolean;
   onMouseDown?: () => void;
+  persistent?: boolean; // keeps element registered across clearElements calls
 }
 
 export interface Status {
@@ -130,6 +132,31 @@ export interface RotatePDFOutput {
   success: boolean;
   outputPath?: string;
   rotatedPages?: number;
+  error?: string;
+}
+
+export type PageNumberPosition =
+  | "bottom-center"
+  | "bottom-left"
+  | "bottom-right"
+  | "top-center"
+  | "top-left"
+  | "top-right";
+
+export interface PageNumbersInput {
+  inputPath: string;
+  outputPath: string;
+  position: PageNumberPosition;
+  startNumber?: number;
+  font?: StandardFonts;
+  fontSize?: number;
+  pages?: number[] | "all";
+}
+
+export interface PageNumbersOutput {
+  success: boolean;
+  outputPath?: string;
+  numberedPages?: number;
   error?: string;
 }
 
