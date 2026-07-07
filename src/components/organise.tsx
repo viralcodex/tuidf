@@ -182,9 +182,8 @@ function OrganisePDFToolWindow(props: OrganisePDFToolWindowProps) {
     refreshPreviewLayout();
   });
 
-  const handleCapabilitiesChange = (nextCapabilities: unknown) => {
-    const resolvedCapabilities =
-      (nextCapabilities as RendererCapabilities | null | undefined) ?? null;
+  const handleCapabilitiesChange = (nextCapabilities: RendererCapabilities) => {
+    const resolvedCapabilities = nextCapabilities ?? null;
 
     setCapabilities(resolvedCapabilities);
 
@@ -504,7 +503,7 @@ function OrganisePDFToolWindow(props: OrganisePDFToolWindowProps) {
           <box flexDirection="row" alignItems="center" justifyContent="center" width={"100%"}>
             <box width={"25%"} alignItems="flex-end" marginLeft={14}>
               <Button
-                label="+ Add Page(s)"
+                label="+ Add Pages"
                 color="green"
                 onClick={() => props.addPages(previousPage())}
                 width={"50%"}
@@ -534,7 +533,7 @@ function OrganisePDFToolWindow(props: OrganisePDFToolWindowProps) {
             </box>
             <box width={"25%"} alignItems="flex-start" marginRight={14}>
               <Button
-                label="+ Add Page(s)"
+                label="+ Add Pages"
                 color="green"
                 onClick={() => props.addPages(nextPage() - 1)}
                 width={"50%"}
