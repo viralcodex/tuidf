@@ -1,8 +1,10 @@
 import { TextAttributes } from "@opentui/core";
+import { useBindings } from "@opentui/keymap/solid";
 import { Index, Show, createResource, createSignal } from "solid-js";
 import type { Accessor } from "solid-js";
 import { EmptyBorderChars, HIGHLIGHT_ACCENT_COLOR } from "../../constants/constants";
 import { useDoubleClick } from "../../hooks/useDoubleClick";
+import { useKeyboardNav } from "../../hooks/useKeyboardNav";
 import { getFormattedFileMetadata, handleFileExplorer, openFile } from "../../utils/utils";
 import { Label } from "./label";
 
@@ -26,7 +28,46 @@ interface FileListProps {
 export function FileList(props: FileListProps) {
   const fileCount = () => props.files().length;
   const handleRowClick = useDoubleClick<number>();
+  const nav = useKeyboardNav();
+
   const [isPreviewOpen, setIsPreviewOpen] = createSignal(false);
+  const [eClickedCount, setEClickedCount] = createSignal(0);
+  let eTimer: ReturnType<typeof setTimeout> | null = null;
+
+  const openFileExplorerFromShortcut = async () => {
+    if (isPreviewOpen()) return;
+    const files = await handleFileExplorer(undefined, props.fileType, setIsPreviewOpen);
+    if (files.length > 0) {
+      props.onFilesSelected?.(files);
+    }
+  };
+
+  useBindings(() => ({
+    priority: 90,
+    bindings: nav.isInputMode()
+      ? []
+      : [
+          {
+            key: "e",
+            cmd: () => {
+              const currentCount = eClickedCount() + 1;
+              setEClickedCount(currentCount);
+              if (eTimer) {
+                clearTimeout(eTimer);
+              }
+              if (currentCount >= 2) {
+                setEClickedCount(0);
+                void openFileExplorerFromShortcut();
+              } else {
+                eTimer = setTimeout(() => {
+                  setEClickedCount(0);
+                }, 700);
+              }
+            },
+          },
+        ],
+  }));
+
   return (
     <box flexDirection="column" width="100%" flexGrow={1} minHeight={0}>
       <Label text={props.header} count={fileCount()} />
@@ -57,7 +98,10 @@ export function FileList(props: FileListProps) {
             <box flexGrow={1} alignItems="center" justifyContent="center" paddingY={1}>
               <text
                 fg="#7f8c8d"
-                content={props.emptyText || "No files added yet. Click or drag files here to add."}
+                content={
+                  props.emptyText ||
+                  "No files added. Click here, press E twice or drag files here to add."
+                }
               />
             </box>
           }
