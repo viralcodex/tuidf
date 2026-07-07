@@ -9,6 +9,7 @@ export interface FocusableElement {
   onEnter?: () => void;
   canFocus?: () => boolean;
   onMouseDown?: () => void;
+  persistent?: boolean; // keeps element registered across clearElements calls
 }
 
 export interface Status {
