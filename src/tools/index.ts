@@ -8,3 +8,4 @@ export * from "./pdf-to-images";
 export * from "./images-to-pdf";
 export * from "./protect";
 export * from "./organise";
+export * from "./page-numbers";

@@ -10,6 +10,7 @@ import { ImagesToPDFUI } from "./images-to-pdf";
 import { ProtectUI } from "./protect";
 import { DecryptUI } from "./decrypt";
 import { OrganiseUI } from "./organise";
+import { PageNumbersUI } from "./page-numbers";
 import { HeaderLayout } from "./header-layout";
 import { PDFPreviewPane } from "./pdf-preview";
 import { useFileListContext } from "../provider/fileListProvider";
@@ -33,6 +34,7 @@ const toolComponents: Record<string, () => any> = {
   protect: ProtectUI,
   decrypt: DecryptUI,
   organise: OrganiseUI,
+  pageNumbers: PageNumbersUI,
 };
 
 export function MainUI(props: MainUIProps) {
