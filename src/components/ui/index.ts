@@ -1,5 +1,7 @@
 export { Button } from "./button";
 export { ButtonRow } from "./button-row";
+export { Dropdown } from "./dropdown";
+export type { DropdownOption } from "./dropdown";
 export { FileList } from "./file-list";
 export { Label } from "./label";
 export { PDFPreviewFrame } from "./pdf-preview-frame";
