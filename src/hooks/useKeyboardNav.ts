@@ -1,10 +1,10 @@
-import { createSignal, createMemo } from "solid-js";
+import { createSignal, createMemo, createContext, useContext } from "solid-js";
 import { useBindings } from "@opentui/keymap/solid";
 import type { FocusableElement } from "../model/models";
 
 export type { FocusableElement };
 
-export function useKeyboardNav() {
+export function createKeyboardNav() {
   const [focusIndex, setFocusIndex] = createSignal(0);
   const [elements, setElements] = createSignal<FocusableElement[]>([]);
   const [isInputMode, setIsInputMode] = createSignal(false);
@@ -62,7 +62,7 @@ export function useKeyboardNav() {
   const getFocusedId = () => focusedElement()?.id ?? null;
 
   const clearElements = () => {
-    setElements([]);
+    setElements((prev) => prev.filter((e) => e.persistent));
     setFocusIndex(0);
   };
 
@@ -70,11 +70,10 @@ export function useKeyboardNav() {
     priority: 100,
     bindings: isInputMode()
       ? [
-          // Let escape bubble to the app-level double-esc handler in src/index.tsx
           {
             key: "escape",
             cmd: () => setIsInputMode(false),
-            preventDefault: false,
+            preventDefault: false, // Let escape bubble to the app-level double-esc handler in src/index.tsx
           },
           {
             key: "tab",
@@ -113,4 +112,10 @@ export function useKeyboardNav() {
     isInputMode,
     setIsInputMode,
   };
+}
+
+export const KeyboardNavContext = createContext<ReturnType<typeof createKeyboardNav>>();
+
+export function useKeyboardNav() {
+  return useContext(KeyboardNavContext) ?? createKeyboardNav();
 }
