@@ -1,5 +1,6 @@
 import { TextAttributes, type BoxRenderable, type CliRenderer } from "@opentui/core";
 import { onResize, useRenderer } from "@opentui/solid";
+import { useBindings } from "@opentui/keymap/solid";
 import { Show, createEffect, createMemo, createResource, createSignal, onCleanup } from "solid-js";
 import {
   clearPDFPreview,
@@ -12,6 +13,7 @@ import { useFileListContext } from "../provider/fileListProvider";
 import { Button } from "./ui/button";
 import { PreviewButton } from "./ui/preview-button";
 import { PDFPreviewFrame } from "./ui/index";
+import { useKeyboardNav } from "../hooks/useKeyboardNav";
 
 type RendererCapabilities = CliRenderer["capabilities"];
 
@@ -21,6 +23,8 @@ const hasKittyGraphics = (capabilities: RendererCapabilities | null) =>
 export function PDFPreviewPane(props: { onOpen: () => void; onClose: () => void }) {
   const renderer = useRenderer();
   const fl = useFileListContext();
+  const nav = useKeyboardNav();
+
   const selectedFile = fl.selectedFile;
   const initialKittySupport = hasKittyGraphics(renderer.capabilities ?? null);
 
@@ -46,12 +50,15 @@ export function PDFPreviewPane(props: { onOpen: () => void; onClose: () => void 
   let layoutRefreshTimer: ReturnType<typeof setTimeout> | null = null;
 
   const totalPages = () => Math.max(pageCount() ?? 0, 1);
+
   const canGoPrev = () => page() > 1;
   const canGoNext = () => page() < totalPages();
+  const goToPrevPage = () => setPage((value) => Math.max(1, value - 1));
+  const goToNextPage = () => setPage((value) => Math.min(totalPages(), value + 1));
+
   const showSupportProbe = () =>
     Boolean(selectedFile()) && !supported() && !capabilityProbeExpired();
   const showUnsupported = () => Boolean(selectedFile()) && !supported() && capabilityProbeExpired();
-  // const showLoading = () => Boolean(selectedFile()) && supported() && isLoading();
   const showError = () =>
     Boolean(selectedFile()) && supported() && !isLoading() && Boolean(error());
 
@@ -222,12 +229,63 @@ export function PDFPreviewPane(props: { onOpen: () => void; onClose: () => void 
     }
   });
 
+  createEffect(() => {
+    nav.registerElement({
+      id: "prev-page",
+      type: "button",
+      persistent: true,
+      onEnter: () => setPage((value) => Math.max(1, value - 1)),
+    });
+
+    nav.registerElement({
+      id: "next-page",
+      type: "button",
+      persistent: true,
+      onEnter: () => setPage((value) => Math.min(totalPages(), value + 1)),
+    });
+  });
+
+  useBindings(() => ({
+    priority: 100,
+    bindings:
+      nav.isInputMode() || !selectedFile()
+        ? []
+        : [
+            {
+              key: "left",
+              cmd: () => {
+                if (canGoPrev()) goToPrevPage();
+              },
+            },
+            {
+              key: "h",
+              cmd: () => {
+                if (canGoPrev()) goToPrevPage();
+              },
+            },
+            {
+              key: "right",
+              cmd: () => {
+                if (canGoNext()) goToNextPage();
+              },
+            },
+            {
+              key: "l",
+              cmd: () => {
+                if (canGoNext()) goToNextPage();
+              },
+            },
+          ],
+  }));
+
   onCleanup(() => {
     renderer.off("capabilities", handleCapabilitiesChange);
     cancelPendingPreviewRender();
     clearCapabilityProbeTimer();
     clearLayoutRefreshTimer();
     clearActivePreview();
+    nav.unregisterElement("prev-page");
+    nav.unregisterElement("next-page");
   });
 
   return (
@@ -262,6 +320,7 @@ export function PDFPreviewPane(props: { onOpen: () => void; onClose: () => void 
             label="◀"
             disabled={!canGoPrev()}
             onClick={() => setPage((value) => Math.max(1, value - 1))}
+            focused={nav.isFocused("prev-page")}
           />
           <box paddingBottom={1}>
             <text
@@ -273,6 +332,7 @@ export function PDFPreviewPane(props: { onOpen: () => void; onClose: () => void 
             label="▶"
             disabled={!canGoNext()}
             onClick={() => setPage((value) => Math.min(totalPages(), value + 1))}
+            focused={nav.isFocused("next-page")}
           />
         </box>
       </Show>
